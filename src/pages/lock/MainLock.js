@@ -33,8 +33,7 @@ export default function MainLock() {
               <div className="col-lg-12">
                 <div className="intro d-flex justify-content-center align-items-end m-0">
                   <div className="intro-content">
-                    <span className="intro-text">Lock</span>
-                    <h3 className="mt-3 mb-0">Create your lock</h3>
+                    <h3 className="mt-3 mb-0">Lock Your Token or LP-Token</h3>
                   </div>
                 </div>
               </div>

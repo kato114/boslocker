@@ -2,11 +2,9 @@ import React, { useMemo } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import Connect from "./Connect";
 import queryString from "query-string";
-import { useTopPoolState } from "../pages/launchpadApply/SaleList/helper/useStats";
 
 export default function Header() {
   const router = useRouter();
-  const poolstats = useTopPoolState(1);
 
   return (
     <React.Fragment>
@@ -64,140 +62,39 @@ export default function Header() {
                     </a>
                   </li>
                 </ul>
-
-                <ul className="navbar-nav items mx-auto">
-                  <li className="nav-item">
-                    <Link
-                      to="/"
-                      className={`nav-link  ${
-                        router.pathname === "/" ? "active" : ""
-                      }`}
-                    >
-                      Home
-                    </Link>
-                  </li>
-
-                  <li className="nav-item">
-                    <Link
-                      to="/sale-list"
-                      className={`nav-link  ${
-                        router.pathname === "/sale-list" ||
-                        router.pathname === "/my-contribution"
-                          ? "active"
-                          : ""
-                      }`}
-                    >
-                      Launchpad
-                    </Link>
-                  </li>
-                  <li className="nav-item dropdown">
-                    <a
-                      href="#menu"
-                      className={`nav-link  ${
-                        router.pathname === "/presale" ||
-                        router.pathname === "/privatesale" ||
-                        router.pathname === "/fairlaunch"
-                          ? "active"
-                          : ""
-                      }`}
-                    >
-                      Create <i className="icon-arrow-down"></i>
-                    </a>
-                    <ul className="dropdown-menu">
-                      <li className="nav-item">
-                        <Link
-                          to="/presale"
-                          className={`nav-link  ${
-                            router.pathname === "/presale" ? "active" : ""
-                          }`}
-                        >
-                          Create Presale
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link
-                          to="/privatesale"
-                          className={`nav-link  ${
-                            router.pathname === "/privatesale" ? "active" : ""
-                          }`}
-                        >
-                          Create PrivateSale
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link
-                          to="/fairlaunch"
-                          className={`nav-link  ${
-                            router.pathname === "/fairlaunch" ? "active" : ""
-                          }`}
-                        >
-                          Create fairlaunch
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
-
-                  <li className="nav-item dropdown">
-                    <a
-                      href="#menu"
-                      className={`nav-link ${
-                        router.pathname === "/lock" ||
-                        router.pathname === "/token-locked" ||
-                        router.pathname === "/liquidity-locked"
-                          ? "active"
-                          : ""
-                      }`}
-                    >
-                      Lock <i className="icon-arrow-down"></i>
-                    </a>
-                    <ul className="dropdown-menu">
-                      <li className="nav-item">
-                        <Link
-                          to="/lock"
-                          className={`nav-link  ${
-                            router.pathname === "/lock" ? "active" : ""
-                          }`}
-                        >
-                          Create
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link
-                          to="/token-locked"
-                          className={`nav-link  ${
-                            router.pathname === "/token-locked" ? "active" : ""
-                          }`}
-                        >
-                          Token Lock{" "}
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link
-                          to="/liquidity-locked"
-                          className={`nav-link  ${
-                            router.pathname === "/liquidity-locked"
-                              ? "active"
-                              : ""
-                          }`}
-                        >
-                          Liquidity Lock
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
-
-                  <li className="nav-item">
-                    <Link
-                      to="/contact"
-                      className={`nav-link  ${
-                        router.pathname === "/contact" ? "active" : ""
-                      }`}
-                    >
-                      Contact
-                    </Link>
-                  </li>
-                </ul>
               </div>
+              <ul className="navbar-nav items mx-auto">
+                <li className="nav-item">
+                  <Link
+                    to="/"
+                    className={`nav-link  ${
+                      router.pathname === "/" ? "active" : ""
+                    }`}
+                  >
+                    Lock Token
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link
+                    to="/token-locked"
+                    className={`nav-link  ${
+                      router.pathname === "/token-locked" ? "active" : ""
+                    }`}
+                  >
+                    Token List
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link
+                    to="/liquidity-locked"
+                    className={`nav-link  ${
+                      router.pathname === "/liquidity-locked" ? "active" : ""
+                    }`}
+                  >
+                    LP Token List
+                  </Link>
+                </li>
+              </ul>
 
               <ul className="navbar-nav action">
                 <Connect />

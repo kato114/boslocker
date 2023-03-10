@@ -88,7 +88,6 @@ export default function LockView() {
                         </td>
                         <td>
                           <Link
-                            style={{ color: "#47c8f2" }}
                             to={`/lock-record/${rowdata.id}${
                               queryChainId
                                 ? `?chainid=${queryChainId}`

@@ -48,11 +48,11 @@ export default function TokenLockList() {
             </div>
           </div>
 
-          <section className="card leaderboard-area pt-2">
+          <section className="leaderboard-area pt-2">
             <div className="row">
               <div className="col-12">
                 <div className="table-responsive">
-                  <table className="table table-borderless">
+                  <table className="table">
                     <thead>
                       <tr>
                         <th scope="col">No</th>
@@ -63,15 +63,9 @@ export default function TokenLockList() {
                     </thead>
                     <tbody>
                       {stats.loading ? (
-                        <div className="row">
-                          <div className="col-12 d-flex justify-content-between">
-                            <HashLoader
-                              size="100"
-                              color="#fff"
-                              cssOverride={{ left: "50%", top: "20%" }}
-                            />
-                          </div>
-                        </div>
+                        <tr className="text-center mt-4">
+                          <td style={{ border: "none" }}>Loading...</td>
+                        </tr>
                       ) : stats.tokenList.length > 0 ? (
                         stats.tokenList
                           .slice(0)
@@ -97,7 +91,6 @@ export default function TokenLockList() {
                                 </td>
                                 <td>
                                   <Link
-                                    style={{ color: "#47c8f2" }}
                                     to={`/lock-details/${rowdata.token}${
                                       chainId ? `?chainid=${chainId}` : ""
                                     }`}

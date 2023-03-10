@@ -68,9 +68,7 @@ export default function LockRecord() {
     setCtLoading(true);
     try {
       if (account) {
-        let lockAddress = contract[chainId]
-          ? contract[chainId].lockAddress
-          : contract["default"].lockAddress;
+        let lockAddress = contract.lockAddress;
         let lockContract = getContract(lockAbi, lockAddress, library);
 
         let tx = await lockContract.unlock(stats.id, {

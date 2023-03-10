@@ -67,7 +67,7 @@ export const Connect = function () {
 
   return (
     <React.Fragment>
-      <li className="nav-item">
+      {/* <li className="nav-item">
         <button
           type="button"
           className="btn ml-lg-auto btn-bordered-white"
@@ -91,7 +91,7 @@ export const Connect = function () {
               : supportNetwork["default"].name}
           </span>
         </button>
-      </li>
+      </li> */}
       <li className="nav-item">
         {error && (
           <button

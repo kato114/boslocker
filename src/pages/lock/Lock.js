@@ -4,15 +4,24 @@ import Context from "./context/Context";
 import { getWeb3 } from "../../hooks/connectors";
 import { toast } from "react-toastify";
 import { contract } from "../../hooks/constant";
+import { currencies } from "../../hooks/currencies";
 import { useWeb3React } from "@web3-react/core";
-import { getContract, mulDecimal } from "../../hooks/contractHelper";
+import {
+  getContract,
+  getWeb3Contract,
+  mulDecimal,
+} from "../../hooks/contractHelper";
 import tokenAbi from "../../json/token.json";
 import lockAbi from "../../json/lockabi.json";
 import { parseEther } from "@ethersproject/units";
 import Button from "react-bootstrap-button-loader";
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import copyIcon from "../../images/icon.png";
+import { useEffect } from "react";
+import { CHAIN_ID } from "../../hooks/connectors";
+import { MulticallContractWeb3 } from "../../hooks/useContracts";
 
 export default function Lock() {
   const context = useWeb3React();
@@ -20,6 +29,9 @@ export default function Lock() {
   const { value, setValue } = useContext(Context);
   const [loading, setLoading] = useState(false);
   const [lockloading, setLockLoading] = useState(false);
+  const [ethFee, setEthFee] = useState(0);
+  const [feeTokens, setFeeTokens] = useState([]);
+  const [feeApproved, setFeeApproved] = useState(true);
   const [error, setError] = useState({
     owner: "",
     title: "",
@@ -29,6 +41,43 @@ export default function Lock() {
     Cycle: "",
     ReleasePercent: "",
   });
+
+  const getFeeTokenList = async () => {
+    const lockContract = getWeb3Contract(
+      lockAbi,
+      contract.lockAddress,
+      CHAIN_ID
+    );
+
+    let _feeTokens = [];
+    for (let i = 0; i < currencies.length; i++) {
+      const { addr, amount } = await lockContract.methods
+        .feeTokenList(currencies[i].address)
+        .call();
+
+      const _feeToken = {
+        symbol: currencies[i].symbol,
+        type: currencies[i].type,
+        addr: addr,
+        amount:
+          currencies[i].type != 3
+            ? amount / 10 ** currencies[i].decimals
+            : amount,
+      };
+
+      _feeTokens.push(_feeToken);
+
+      if (currencies[i].symbol == "ETH") {
+        setEthFee(amount);
+      }
+    }
+
+    setFeeTokens(_feeTokens);
+  };
+
+  useEffect(async () => {
+    await getFeeTokenList();
+  }, []);
 
   const checkValidation = (input, inputValue) => {
     let terror = 0;
@@ -174,9 +223,7 @@ export default function Lock() {
         try {
           if (value.tokenAddress) {
             setLoading(true);
-            let poolfactoryAddress = contract[chainId]
-              ? contract[chainId].lockAddress
-              : contract["default"].lockAddress;
+            let lockAddress = contract.lockAddress;
             let tokenContract = getContract(
               tokenAbi,
               value.tokenAddress,
@@ -184,7 +231,7 @@ export default function Lock() {
             );
             let amount = parseEther("1000000000000000000000000000").toString();
 
-            let tx = await tokenContract.approve(poolfactoryAddress, amount, {
+            let tx = await tokenContract.approve(lockAddress, amount, {
               from: account,
             });
             const resolveAfter3Sec = new Promise((resolve) =>
@@ -204,6 +251,64 @@ export default function Lock() {
                   );
                   setLoading(false);
                   setValue({ ...value, isApprove: true });
+                } else if (response.status === false) {
+                  toast.error("error ! Your last transaction is failed.");
+                  setLoading(false);
+                } else {
+                  toast.error("error ! something went wrong.");
+                  setLoading(false);
+                }
+              }
+            }, 5000);
+          } else {
+            toast.error("Please enter valid token address !");
+            setLoading(false);
+          }
+        } catch (err) {
+          toast.error(err.reason);
+          setLoading(false);
+        }
+      } else {
+        toast.error("Please select Smart Chain Network !");
+        setLoading(false);
+      }
+    } else {
+      toast.error("Please Connect Wallet!");
+      setLoading(false);
+    }
+  };
+
+  const handleApproveFeeToken = async (e) => {
+    e.preventDefault();
+    if (account) {
+      if (chainId) {
+        try {
+          if (value.feeToken) {
+            setLoading(true);
+            let lockAddress = contract.lockAddress;
+            let tokenContract = getContract(tokenAbi, value.feeToken, library);
+            let amount = parseEther("1000000000000000000000000000").toString();
+
+            let tx = await tokenContract.approve(lockAddress, amount, {
+              from: account,
+            });
+            const resolveAfter3Sec = new Promise((resolve) =>
+              setTimeout(resolve, 5000)
+            );
+            toast.promise(resolveAfter3Sec, {
+              pending: "Waiting for confirmation 👌",
+            });
+            var interval = setInterval(async function () {
+              let web3 = getWeb3(chainId);
+              var response = await web3.eth.getTransactionReceipt(tx.hash);
+              if (response != null) {
+                clearInterval(interval);
+                if (response.status === true) {
+                  toast.success(
+                    "success ! your last transaction is success 👍"
+                  );
+                  setLoading(false);
+                  setFeeApproved(true);
                 } else if (response.status === false) {
                   toast.error("error ! Your last transaction is failed.");
                   setLoading(false);
@@ -268,9 +373,7 @@ export default function Lock() {
       try {
         let web3 = getWeb3(chainId);
         setLockLoading(true);
-        let lockAddress = contract[chainId]
-          ? contract[chainId].lockAddress
-          : contract["default"].lockAddress;
+        let lockAddress = contract.lockAddress;
         let lockContract = getContract(lockAbi, lockAddress, library);
         if (value.isvesting) {
           let tx = await lockContract.vestingLock(
@@ -283,7 +386,11 @@ export default function Lock() {
             value.Cycle * 60,
             value.ReleasePercent * 100,
             value.title,
-            { from: account }
+            value.feeToken,
+            {
+              from: account,
+              value: value.feeToken == currencies[0].address ? ethFee : 0,
+            }
           );
           const resolveAfter3Sec = new Promise((resolve) =>
             setTimeout(resolve, 5000)
@@ -317,7 +424,11 @@ export default function Lock() {
               Math.floor(new Date(value.TGEDate).getTime() / 1000.0)
             ),
             value.title,
-            { from: account }
+            value.feeToken,
+            {
+              from: account,
+              value: value.feeToken == currencies[0].address ? ethFee : 0,
+            }
           );
           const resolveAfter3Sec = new Promise((resolve) =>
             setTimeout(resolve, 5000)
@@ -352,9 +463,34 @@ export default function Lock() {
     }
   };
 
+  const handleFeeChange = async (e, feeType) => {
+    setValue({ ...value, feeToken: e.target.value });
+    if (feeType == 2) {
+      const mc = MulticallContractWeb3(chainId);
+      const tokenContract = await getWeb3Contract(
+        tokenAbi,
+        e.target.value,
+        CHAIN_ID
+      );
+      const tokendata = await mc.aggregate([
+        tokenContract.methods.decimals(),
+        tokenContract.methods.allowance(account, contract.lockAddress),
+      ]);
+
+      let isApprove = tokendata[1]
+        ? tokendata[1] / Math.pow(10, tokendata[0]) > 10000000000000000000
+          ? true
+          : false
+        : false;
+
+      setFeeApproved(isApprove);
+    } else {
+      setFeeApproved(true);
+    }
+  };
+
   return (
     <div className={`tab-pane active mt-3`} role="tabpanel" id="step1">
-      <h5>Create your lock</h5>
       <div className="row">
         <LockInput value={value} setValue={setValue} />
 
@@ -403,7 +539,7 @@ export default function Lock() {
               value={value.title}
               type="text"
               name="title"
-              placeholder="e.g. 1"
+              placeholder="Enter Token Lock Title"
             />
             <small className="text-danger">{error.title}</small>
             <br />
@@ -420,7 +556,7 @@ export default function Lock() {
               value={value.amount}
               type="text"
               name="amount"
-              placeholder="e.g. 1"
+              placeholder="Enter Token Amount"
             />
             <small className="text-danger">{error.amount}</small>
             <br />
@@ -538,19 +674,56 @@ export default function Lock() {
             <br />
           </div>
         )}
+
+        <div className="col-md-12 mt-4 mb-0">
+          <label>Fee Options</label>
+          {feeTokens.map((fee, index) => {
+            return (
+              <div className="form-check" key={index}>
+                <input
+                  id={`fee-${index}`}
+                  type="radio"
+                  style={{ width: "auto" }}
+                  className="form-check-input"
+                  name="fees"
+                  value={fee.addr}
+                  onChange={(e) => handleFeeChange(e, fee.type)}
+                  checked={value.feeToken == fee.addr ? true : false}
+                />
+                <label htmlFor={`fee-${index}`}>
+                  {fee.amount}
+                  {fee.type == 3 && "% of "} {fee.symbol}
+                </label>
+              </div>
+            );
+          })}
+        </div>
       </div>
       <ul className="list-inline text-center">
         {value.isApprove ? (
-          <li>
-            <Button
-              type="button"
-              className="default-btn"
-              loading={lockloading}
-              onClick={(e) => handleLockToken(e)}
-            >
-              Lock
-            </Button>
-          </li>
+          feeApproved ? (
+            <li>
+              <Button
+                type="button"
+                className="default-btn"
+                loading={lockloading}
+                onClick={(e) => handleLockToken(e)}
+              >
+                Lock
+              </Button>
+            </li>
+          ) : (
+            <li>
+              <Button
+                type="button"
+                className="default-btn"
+                onClick={(e) => handleApproveFeeToken(e)}
+                loading={loading}
+              >
+                Approve Fee Token
+              </Button>
+            </li>
+          )
         ) : (
           <li>
             <Button
@@ -568,17 +741,9 @@ export default function Lock() {
         <span>
           Note : Please exclude Our Contract address
           <span className="step-input-value ml-3 mr-3">
-            {contract[chainId]
-              ? contract[chainId].lockAddress
-              : contract["default"].lockAddress}
+            {contract.lockAddress}
           </span>
-          <CopyToClipboard
-            text={
-              contract[chainId]
-                ? contract[chainId].lockAddress
-                : contract["default"].lockAddress
-            }
-          >
+          <CopyToClipboard text={contract.lockAddress}>
             <img style={{ cursor: "pointer" }} src={copyIcon} alt="project" />
           </CopyToClipboard>{" "}
           from fees, rewards, max tx amount to start locking tokens.

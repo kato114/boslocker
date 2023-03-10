@@ -1,32 +1,22 @@
-// import binanceCoin from '../images/binance-coin.png';
-import dyno from "../images/dyno.png";
-import binanceCoin from "../images/binance-coin.png";
+import ethCoin from "../images/ethereum.png";
 
 export const supportNetwork = {
-  // 7363: {
-  //   name: "DYNO",
-  //   chainId: 7363,
-  //   rpc: "https://rpc.dynochain.io/",
-  //   image: dyno,
-  //   symbol: "DND",
-  // },
-  7364: {
-    name: "TDYNO",
-    chainId: 7364,
-    rpc: "https://rpctest.dynochain.io/",
-    image: dyno,
-    symbol: "TDND",
+  5: {
+    name: "Goerli Testnet",
+    chainId: 5,
+    rpc: "https://eth-goerli.g.alchemy.com/v2/5N02vS8nblN4kMJBLwV4N_gU7ZtSUL7O",
+    image: ethCoin,
+    symbol: "Goerli Testnet",
   },
   default: {
-    name: "TDYNO",
-    chainId: 7364,
-    rpc: "https://rpctest.dynochain.io/",
-    image: dyno,
-    symbol: "TDND",
+    name: "Goerli Testnet",
+    chainId: 5,
+    rpc: "https://eth-goerli.g.alchemy.com/v2/5N02vS8nblN4kMJBLwV4N_gU7ZtSUL7O",
+    image: ethCoin,
+    symbol: "Goerli Testnet",
   },
 };
 
 export const RPC_URLS = {
-  7363: "https://rpc.dynochain.io/",
-  7364: "https://rpctest.dynochain.io/",
+  5: "https://eth-goerli.g.alchemy.com/v2/5N02vS8nblN4kMJBLwV4N_gU7ZtSUL7O",
 };

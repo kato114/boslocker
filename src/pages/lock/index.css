@@ -377,7 +377,7 @@ input[type="checkbox"]:checked::before{
   background: transparent;
   font-family: "Russo One", sans-serif;
   color: #c9c8c5;
-  border: 1px solid #fff;
+  border: 1px solid var(--primary-color);
 }
 
 .form-control {
@@ -426,7 +426,7 @@ small {
 }
 
 .step-input-value {
-  color: #3298dc;
+  color: #f7393b;
 }
 
 .card-span {

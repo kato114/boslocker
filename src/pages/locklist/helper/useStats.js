@@ -18,9 +18,7 @@ export const useCommonStats = (updater) => {
   let history = useHistory();
 
   let web3 = getWeb3(chainId);
-  let lockAddress = contract[chainId]
-    ? contract[chainId].lockAddress
-    : contract["default"].lockAddress;
+  let lockAddress = contract.lockAddress;
 
   const [stats, setStats] = useState({
     allNormalTokenLockedCount: 0,
@@ -116,9 +114,7 @@ export const useCommonLpStats = (updater) => {
   let history = useHistory();
 
   let web3 = getWeb3(chainId);
-  let lockAddress = contract[chainId]
-    ? contract[chainId].lockAddress
-    : contract["default"].lockAddress;
+  let lockAddress = contract.lockAddress;
 
   const [stats, setStats] = useState({
     allNormalTokenLockedCount: 0,
@@ -229,9 +225,7 @@ export const useDetailsStats = (updater) => {
   const queryChainId = new URLSearchParams(search).get("chainid");
 
   let web3 = getWeb3(queryChainId ? queryChainId : chainId);
-  let lockAddress = contract[chainId]
-    ? contract[chainId].lockAddress
-    : contract["default"].lockAddress;
+  let lockAddress = contract.lockAddress;
 
   const [stats, setStats] = useState({
     cumulativeLockInfo: 0,
@@ -330,9 +324,7 @@ export const useRecordStats = (updater) => {
   const queryChainId = new URLSearchParams(search).get("chainid");
 
   let web3 = getWeb3(queryChainId ? queryChainId : chainId);
-  let lockAddress = contract[queryChainId ? queryChainId : chainId]
-    ? contract[queryChainId ? queryChainId : chainId].lockAddress
-    : contract["default"].lockAddress;
+  let lockAddress = contract.lockAddress;
 
   const [stats, setStats] = useState({
     TokenAddress: "",
@@ -445,9 +437,7 @@ export const useMyTokenLockStats = (updater) => {
   let history = useHistory();
 
   let web3 = getWeb3(chainId);
-  let lockAddress = contract[chainId]
-    ? contract[chainId].lockAddress
-    : contract["default"].lockAddress;
+  let lockAddress = contract.lockAddress;
 
   const [stats, setStats] = useState({
     allNormalTokenLockedCount: 0,
@@ -530,9 +520,7 @@ export const useMyLpLockStats = (updater) => {
   let history = useHistory();
 
   let web3 = getWeb3(chainId);
-  let lockAddress = contract[chainId]
-    ? contract[chainId].lockAddress
-    : contract["default"].lockAddress;
+  let lockAddress = contract.lockAddress;
 
   const [stats, setStats] = useState({
     allNormalTokenLockedCount: 0,
