@@ -402,7 +402,7 @@ input[type="checkbox"]:checked::before{
 .form-control:focus {
   color: #c9c8c5;
   background-color: transparent;
-  border-color: rgb(241 70 104 / 25%);
+  border-color: white;
   outline: 0;
 }
 
@@ -497,7 +497,7 @@ svg.react-datetime-picker__calendar-button__icon.react-datetime-picker__button__
 }
 
 .react-datetime-picker__inputGroup__input::placeholder {
-  color: #f0eee9;
+  color: #a7a7a7;
 }
 
 .react-datepicker__input-container input[type="text"] {

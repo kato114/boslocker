@@ -29,6 +29,7 @@ export default function Lock() {
   const { value, setValue } = useContext(Context);
   const [loading, setLoading] = useState(false);
   const [lockloading, setLockLoading] = useState(false);
+  const [maxValue, setMaxValue] = useState(0);
   const [ethFee, setEthFee] = useState(0);
   const [feeTokens, setFeeTokens] = useState([]);
   const [feeApproved, setFeeApproved] = useState(true);
@@ -92,7 +93,7 @@ export default function Lock() {
           message = "Please Enter Valid Amount!";
         } else if (parseFloat(inputValue) > value.balance) {
           terror += 1;
-          message = "amount must be less than or equal to!";
+          message = "Amount must be less than or equal to!";
         } else {
           message = "";
         }
@@ -120,7 +121,7 @@ export default function Lock() {
           parseFloat(inputValue) > 100
         ) {
           terror += 1;
-          message = "percentage must be less than 100%!";
+          message = "Percentage must be less than 100%!";
         } else {
           message = "";
         }
@@ -361,6 +362,11 @@ export default function Lock() {
     setValue({ ...value, [e.target.name]: e.target.value });
   };
 
+  const handleMax = (e) => {
+    checkValidation("amount", value.balance);
+    setValue({ ...value, amount: value.balance });
+  };
+
   const handleEndTimeChange = (date) => {
     checkValidation("TGEDate", date);
     setValue({ ...value, TGEDate: date });
@@ -466,24 +472,30 @@ export default function Lock() {
   const handleFeeChange = async (e, feeType) => {
     setValue({ ...value, feeToken: e.target.value });
     if (feeType == 2) {
-      const mc = MulticallContractWeb3(chainId);
-      const tokenContract = await getWeb3Contract(
-        tokenAbi,
-        e.target.value,
-        CHAIN_ID
-      );
-      const tokendata = await mc.aggregate([
-        tokenContract.methods.decimals(),
-        tokenContract.methods.allowance(account, contract.lockAddress),
-      ]);
+      if (account !== null && account !== undefined) {
+        const mc = MulticallContractWeb3(chainId);
+        const tokenContract = await getWeb3Contract(
+          tokenAbi,
+          e.target.value,
+          CHAIN_ID
+        );
+        console.log("kato", tokenContract);
+        const tokendata = await mc.aggregate([
+          tokenContract.methods.decimals(),
+          tokenContract.methods.allowance(account, contract.lockAddress),
+        ]);
+        console.log("kato", tokendata);
 
-      let isApprove = tokendata[1]
-        ? tokendata[1] / Math.pow(10, tokendata[0]) > 10000000000000000000
-          ? true
-          : false
-        : false;
+        let isApprove = tokendata[1]
+          ? tokendata[1] / Math.pow(10, tokendata[0]) > 10000000000000000000
+            ? true
+            : false
+          : false;
 
-      setFeeApproved(isApprove);
+        setFeeApproved(isApprove);
+      } else {
+        setFeeApproved(false);
+      }
     } else {
       setFeeApproved(true);
     }
@@ -492,7 +504,11 @@ export default function Lock() {
   return (
     <div className={`tab-pane active mt-3`} role="tabpanel" id="step1">
       <div className="row">
-        <LockInput value={value} setValue={setValue} />
+        <LockInput
+          value={value}
+          setValue={setValue}
+          setMaxValue={setMaxValue}
+        />
 
         <div className="col-md-12 mt-4 mb-0">
           <div className="form-check form-check-inline">
@@ -550,14 +566,35 @@ export default function Lock() {
             <label>
               Amount<span className="text-danger">*</span>
             </label>
-            <input
-              className="form-control"
-              onChange={(e) => onChangeInput(e)}
-              value={value.amount}
-              type="text"
-              name="amount"
-              placeholder="Enter Token Amount"
-            />
+            <div className="d-flex">
+              <input
+                className="form-control"
+                onChange={(e) => onChangeInput(e)}
+                value={value.amount}
+                type="text"
+                name="amount"
+                placeholder="Enter Token Amount"
+                style={{
+                  borderTopRightRadius: "0px",
+                  borderBottomRightRadius: "0px",
+                  borderRight: "0px",
+                }}
+              />
+              <button
+                className="btn btn-max m-0 rounded-0"
+                type="button"
+                onClick={(e) => {
+                  handleMax();
+                }}
+                style={{
+                  borderColor: "white",
+                  borderWidth: "1px",
+                  borderLeft: "0px",
+                }}
+              >
+                Max
+              </button>
+            </div>
             <small className="text-danger">{error.amount}</small>
             <br />
           </div>
@@ -691,7 +728,7 @@ export default function Lock() {
                   checked={value.feeToken == fee.addr ? true : false}
                 />
                 <label htmlFor={`fee-${index}`}>
-                  {fee.amount}
+                  {fee.amount / 100}
                   {fee.type == 3 && "% of "} {fee.symbol}
                 </label>
               </div>

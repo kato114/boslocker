@@ -165,6 +165,7 @@ export const useCommonLpStats = (updater) => {
               const lpdata = await mc.aggregate([
                 token0Contract.methods.symbol(),
                 token1Contract.methods.symbol(),
+                lpContract.methods.symbol(),
               ]);
 
               return {
@@ -173,7 +174,7 @@ export const useCommonLpStats = (updater) => {
                 token: value.token,
                 factory: value.factory,
                 name: `${lpdata[0]}/${lpdata[1]}`,
-                symbol: `${lpdata[0]}`,
+                symbol: lpdata[2],
               };
             })
           ).then((result) => {
@@ -256,10 +257,12 @@ export const useDetailsStats = (updater) => {
 
           data = await mc.aggregate([
             pmc.methods.totalLockCountForToken(urlAddress),
-            token0Contract.methods.symbol(),
-            token1Contract.methods.symbol(),
+            lpContract.methods.name(),
+            lpContract.methods.symbol(),
             lpContract.methods.decimals(),
             pmc.methods.cumulativeLockInfo(urlAddress),
+            token0Contract.methods.symbol(),
+            token1Contract.methods.symbol(),
           ]);
           lp = true;
         } catch (err) {
@@ -285,10 +288,11 @@ export const useDetailsStats = (updater) => {
           cumulativeLockInfo: data[4][2] / Math.pow(10, data[3]),
           CurrentLockedAmount: 0,
           TokenAddress: urlAddress,
-          TokenName: lp ? `${data[1]}/${data[2]}` : data[1],
-          TokenSymbol: lp ? `${data[1]}/${data[2]}` : data[2],
+          TokenName: data[1],
+          TokenSymbol: data[2],
           TokenDecimals: data[3],
           lockdata: lockdata[0],
+          LockedSymbol: lp? `${data[5]}/${data[6]}` : data[2]
         });
       } catch (err) {
         // toast.error(err.message)
@@ -564,6 +568,7 @@ export const useMyLpLockStats = (updater) => {
                 token0Contract.methods.symbol(),
                 token1Contract.methods.symbol(),
                 lpContract.methods.decimals(),
+                lpContract.methods.symbol(),
               ]);
               return {
                 amount: value.amount,
@@ -571,7 +576,7 @@ export const useMyLpLockStats = (updater) => {
                 token: value.token,
                 factory: value.factory,
                 name: `${tokendata[0]}/${tokendata[1]}`,
-                symbol: `${tokendata[0]}/${tokendata[1]}`,
+                symbol: tokendata[3],
               };
             })
           ).then((result) => {

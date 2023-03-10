@@ -23,7 +23,7 @@ export default function LockView() {
                 <div className="mt-3 d-flex justify-content-between card-span">
                   <p>Current Locked Amount</p>
                   <p className="step-input-value">
-                    {formatPrice(stats.cumulativeLockInfo)} {stats.TokenSymbol}
+                    {formatPrice(stats.cumulativeLockInfo)} {stats.LockedSymbol}
                   </p>
                 </div>
                 <div className="mt-3 d-flex justify-content-between card-p">

@@ -5,11 +5,12 @@ import { ethers } from "ethers";
 import Web3 from "web3";
 import { supportNetwork, RPC_URLS } from "./network";
 
-export const CHAIN_ID = 5;
-export const infura_Id = "84842078b09946638c03157f83405213";
+export const CHAIN_ID = 1;
+export const infura_Id = "b870be2fc3f141a28946b03b10cefee8";
 
 export const getRpcUrl = () => {
   return {
+    1: "https://mainnet.infura.io/v3/b870be2fc3f141a28946b03b10cefee8",
     5: "https://eth-goerli.g.alchemy.com/v2/5N02vS8nblN4kMJBLwV4N_gU7ZtSUL7O",
   }[CHAIN_ID];
 };
@@ -36,7 +37,7 @@ export const walletconnect = new WalletConnectConnector({
 });
 
 export const coinbaseWallet = new WalletLinkConnector({
-  url: `https://eth-goerli.g.alchemy.com/v2/5N02vS8nblN4kMJBLwV4N_gU7ZtSUL7O`,
+  url: `https://mainnet.infura.io/v3/b870be2fc3f141a28946b03b10cefee8`,
   appName: "Lauchpad App",
   supportedChainIds: supportChainId,
 });
