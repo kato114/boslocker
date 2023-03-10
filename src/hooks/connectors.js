@@ -6,11 +6,11 @@ import Web3 from "web3";
 import { supportNetwork, RPC_URLS } from "./network";
 
 export const CHAIN_ID = 1;
-export const infura_Id = "b870be2fc3f141a28946b03b10cefee8";
+export const infura_Id = "_1jxmHKFpouR8RjnG8NdYG1o21yT37GB";
 
 export const getRpcUrl = () => {
   return {
-    1: "https://mainnet.infura.io/v3/b870be2fc3f141a28946b03b10cefee8",
+    1: "https://eth-mainnet.g.alchemy.com/v2/_1jxmHKFpouR8RjnG8NdYG1o21yT37GB",
     5: "https://eth-goerli.g.alchemy.com/v2/5N02vS8nblN4kMJBLwV4N_gU7ZtSUL7O",
   }[CHAIN_ID];
 };
@@ -37,7 +37,7 @@ export const walletconnect = new WalletConnectConnector({
 });
 
 export const coinbaseWallet = new WalletLinkConnector({
-  url: `https://mainnet.infura.io/v3/b870be2fc3f141a28946b03b10cefee8`,
+  url: `https://eth-mainnet.g.alchemy.com/v2/_1jxmHKFpouR8RjnG8NdYG1o21yT37GB`,
   appName: "Lauchpad App",
   supportedChainIds: supportChainId,
 });

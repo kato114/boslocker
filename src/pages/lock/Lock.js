@@ -63,7 +63,7 @@ export default function Lock() {
         amount:
           currencies[i].type != 3
             ? amount / 10 ** currencies[i].decimals
-            : amount,
+            : amount / 100,
       };
 
       _feeTokens.push(_feeToken);
@@ -479,12 +479,10 @@ export default function Lock() {
           e.target.value,
           CHAIN_ID
         );
-        console.log("kato", tokenContract);
         const tokendata = await mc.aggregate([
           tokenContract.methods.decimals(),
           tokenContract.methods.allowance(account, contract.lockAddress),
         ]);
-        console.log("kato", tokendata);
 
         let isApprove = tokendata[1]
           ? tokendata[1] / Math.pow(10, tokendata[0]) > 10000000000000000000
@@ -728,8 +726,7 @@ export default function Lock() {
                   checked={value.feeToken == fee.addr ? true : false}
                 />
                 <label htmlFor={`fee-${index}`}>
-                  {fee.amount / 100}
-                  {fee.type == 3 && "% of "} {fee.symbol}
+                  {fee.amount} {fee.type == 3 && "% of "} {fee.symbol}
                 </label>
               </div>
             );

@@ -5,6 +5,8 @@ import Context from "./context/Context";
 import { useWeb3React } from "@web3-react/core";
 import { defaultValue } from "./context/defaults";
 
+import shibarium from "../../images/shibarium.png";
+
 export default function MainLock() {
   const appContext = useContext(Context);
   const [context, setContext] = useState(appContext);
@@ -32,7 +34,8 @@ export default function MainLock() {
             <div className="row">
               <div className="col-lg-12">
                 <div className="intro d-flex justify-content-center align-items-end m-0">
-                  <div className="intro-content">
+                  <div className="intro-content text-center">
+                    <img src={shibarium} style={{ height: "100px" }} />
                     <h3 className="mt-3 mb-0">Lock Your Token or LP-Token</h3>
                   </div>
                 </div>
